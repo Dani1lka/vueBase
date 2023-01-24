@@ -2,11 +2,14 @@
   <div class="container">
     <form class="card" @submit.prevent="submitForms">
       <h1>Анкета на Vue разработчика!</h1>
-      <div class="form-control">
-        <label for="name">Как тебя зовут?</label>
-        <input type="text" id="name" v-model.trim="name" placeholder="Введи имя">
-      </div>
-
+     
+      <appInput 
+      placeholder="Введите имя" 
+      :error="errors.name"
+      label="Как тебя зовут?"
+      v-model="name" 
+      >
+      </appInput>
       <div class="form-control">
         <label for="age">Выбери возраст</label>
         <input type="number" id="age" v-model.number="age">
@@ -59,8 +62,9 @@
 </template>
 
 <script>
-
+import appInput from './appInput.vue'
   export default {
+    components:{appInput},
     name:"App",
     data(){
         return{
@@ -70,18 +74,35 @@
           choose: '',
           skills: [],
           rules: '',
+          errors:{
+            name:null,
+          }
         }
       },
     methods:{
+      formIsValid(){
+        let isValid = true
+        if(this.name.length === 0){
+          this.errors.name="Имя не может быть пустым"
+          isValid = false
+        }
+        else{
+          this.errors.name = null
+        }
+        return isValid
+      },
       submitForms(){
-        console.group('Form Data');
-        console.log('Name:', this.name)
-        console.log('Age:', this.age)
-        console.log('City:', this.city)
-        console.log('Choose:', this.choose)
-        console.log('Your skills:', this.skills)
-        console.log('Our rules:', this.rules)
-        console.groupEnd()
+        if(this.formIsValid()){
+          console.group('Form Data');
+          console.log('Name:', this.name)
+          console.log('Age:', this.age)
+          console.log('City:', this.city)
+          console.log('Choose:', this.choose)
+          console.log('Your skills:', this.skills)
+          console.log('Our rules:', this.rules)
+          console.groupEnd()
+        }
+        
       },
       
     },
@@ -90,5 +111,10 @@
 </script>
 
 <style>
-
+.form-control small{
+  color: red;
+}
+.form-control .invalid input{
+  border: 2px solid red;
+}
 </style>
